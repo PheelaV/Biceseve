@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Biceseve.ConsoleApp": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\filip\\source\\repos\\Biceseve\\color.bmp"
+    }
+  }
+}
