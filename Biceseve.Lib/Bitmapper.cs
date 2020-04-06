@@ -1,14 +1,18 @@
-﻿using System;
+﻿using Biceseve.Lib.Enums;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
+using Color = System.Drawing.Color;
 
 namespace Biceseve.Lib
 {
-    public class Bitmapper
+    public static partial class Bitmapper
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1814:Prefer jagged arrays over multidimensional", Justification = "<Pending>")]
         // CURRENTLY ONLY TESTED WITH 24bit bmp
-        public static Color[][] ConvertToRGBArray(Bitmap bmp)
+        public static RgbArray ConvertToRGBArray(this Bitmap bmp, RgbArrayColorMode colorMode = RgbArrayColorMode.realistic)
         {
             //https://stackoverflow.com/a/1563170
 
@@ -17,6 +21,13 @@ namespace Biceseve.Lib
 
             /* GetBitsPerPixel just does a switch on the PixelFormat and returns the number */
             byte bitsPerPixel = Convert.ToByte(GetBitsPerPixel(bData.PixelFormat));
+
+            if(bitsPerPixel != 24)
+            {
+                Console.WriteLine("WARNING, currently tested only with 24bit bmp, might be unstable");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
 
             /*the size of the image in bytes */
             int size = bData.Stride * bData.Height;
@@ -36,7 +47,8 @@ namespace Biceseve.Lib
 
                 // bmp format scans starts at bottom left and goes to top right
                 // data[i] is the first of 3 bytes of color
-                result[y - 1][x] = Color.FromArgb(data[i + 2], data[i + 1], data[i]);
+                // bmp stores values as Blue, Green, Red
+                result[y - 1][x] = GetColor(data[i + 2], data[i + 1], data[i], colorMode);
             }
 
             /* This override copies the data back into the location specified */
@@ -44,10 +56,44 @@ namespace Biceseve.Lib
 
             bmp.UnlockBits(bData);
 
-            return result;
+            return new RgbArray(result);
         }
 
-        public static int GetBitsPerPixel(PixelFormat format)
+        public static void SaveRgbArrayAsJpgImage(this RgbArray rgbArray, string filePath)
+        {
+            var width = rgbArray.Width;
+            var height = rgbArray.Height;
+            using var image = new Image<Rgb24>(width, height);
+
+            for (var x = 0; x < width; x++)
+            {
+                for (var y = 0; y < height; y++)
+                {
+                    var pixel = rgbArray.data[y][x];
+                    image[x, y] = new Rgb24(pixel.R, pixel.G, pixel.B);
+                }
+            }
+
+            using var stream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            image.SaveAsJpeg(stream);
+        }
+
+        private static Color GetColor(int r, int g, int b, RgbArrayColorMode mode)
+        {
+            switch (mode)
+            {
+                case RgbArrayColorMode.monochromatic:
+                    var magnitude = CS152Helpers.GetMagnitude(r, g, b) / 3;
+                    return Color.FromArgb(magnitude, magnitude, magnitude);
+                case RgbArrayColorMode.scaledHue:
+                    throw new NotImplementedException("");
+                case RgbArrayColorMode.realistic:
+                default:
+                    return Color.FromArgb(r, g, b);
+            }
+        }
+
+        private static int GetBitsPerPixel(PixelFormat format)
         {
             switch (format)
             {
@@ -77,6 +123,10 @@ namespace Biceseve.Lib
                 default:
                     return 0;
             }
+        }
+        public static double GetMagnitude(Color color)
+        {
+            return color.R + color.G + color.B;
         }
     }
 }

@@ -11,32 +11,17 @@ namespace Biceseve.ConsoleApp
     {
         static void Main(string[] args)
         {
-            if (args.Length != 1) return;
-
+            if (args.Length != 1) throw new ArgumentException("Please provide file to convert");
             var file = new FileInfo(args[0]);
-
-            if (!file.Exists) return;
+            if (!file.Exists) throw new ArgumentException("Provided file does not exist");
 
             using var sourceImage = new Bitmap(file.FullName);
 
+            var rgbArray = sourceImage.ConvertToRGBArray(Lib.Enums.RgbArrayColorMode.monochromatic);
 
-            var img = Bitmapper.ConvertToRGBArray(sourceImage);
-
-            using var image = new Image<Rgb24>(sourceImage.Width, sourceImage.Height);
-
-            for (var x = 0; x < sourceImage.Width; x++)
-            {
-                for(var y = 0; y < sourceImage.Height; y++)
-                {
-                    var pixel = img[y][x];
-                    image[x, y] = new Rgb24(pixel.R, pixel.G, pixel.B);
-                }
-            }
-
-            using var stream = new FileStream(Path.Combine(file.DirectoryName, "output.jpg"), FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            image.SaveAsJpeg(stream);
+            rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output.jpg"));
+            rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, "output.xyz"));
 
         }
-        
     }
 }
