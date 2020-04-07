@@ -1,9 +1,4 @@
-﻿using Biceseve.Lib;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using System;
-using System.Drawing;
-using System.IO;
+﻿using System;
 
 namespace Biceseve.ConsoleApp
 {
@@ -11,17 +6,19 @@ namespace Biceseve.ConsoleApp
     {
         static void Main(string[] args)
         {
-            if (args.Length != 1) throw new ArgumentException("Please provide file to convert");
-            var file = new FileInfo(args[0]);
-            if (!file.Exists) throw new ArgumentException("Provided file does not exist");
-
-            using var sourceImage = new Bitmap(file.FullName);
-
-            var rgbArray = sourceImage.ConvertToRGBArray(Lib.Enums.RgbArrayColorMode.monochromatic);
-
-            rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output.jpg"));
-            rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, "output.xyz"));
-
+            var paramsLengthValid = args.Length == 2;
+            if(args[0] == "-r" || args[0] == "--read" && paramsLengthValid)
+            {
+                XyzHelper.ReadXYZFormat(args[1]);
+            } 
+            else if (args[0] == "-w" || args[0] == "--write" && paramsLengthValid)
+            {
+                XyzHelper.WriteXYZFormat(args[1]);
+            } 
+            else
+            {
+                throw new ArgumentException("Invalid program params");
+            }
         }
     }
 }

@@ -12,7 +12,7 @@ namespace Biceseve.Lib
     public static partial class Bitmapper
     {
         // CURRENTLY ONLY TESTED WITH 24bit bmp
-        public static RgbArray ConvertToRGBArray(this Bitmap bmp, RgbArrayColorMode colorMode = RgbArrayColorMode.realistic)
+        public static RgbArray ConvertToRGBArray(this Bitmap bmp, MagnitudeRgbConversionMode colorMode = MagnitudeRgbConversionMode.realistic)
         {
             //https://stackoverflow.com/a/1563170
 
@@ -78,16 +78,30 @@ namespace Biceseve.Lib
             image.SaveAsJpeg(stream);
         }
 
-        private static Color GetColor(int r, int g, int b, RgbArrayColorMode mode)
+        public static Color GetColor(int magnitude, MagnitudeRgbConversionMode conversionMode)
         {
-            switch (mode)
+            switch (conversionMode)
             {
-                case RgbArrayColorMode.monochromatic:
-                    var magnitude = CS152Helpers.GetMagnitude(r, g, b) / 3;
+                case MagnitudeRgbConversionMode.monochromatic:
                     return Color.FromArgb(magnitude, magnitude, magnitude);
-                case RgbArrayColorMode.scaledHue:
-                    throw new NotImplementedException("");
-                case RgbArrayColorMode.realistic:
+                case MagnitudeRgbConversionMode.scaledHue:
+                    throw new NotImplementedException("Future development");
+                case MagnitudeRgbConversionMode.realistic:
+                default:
+                    throw new NotImplementedException("Future development");
+            }
+        }
+
+        public static Color GetColor(int r, int g, int b, MagnitudeRgbConversionMode conversionMode)
+        {
+            switch (conversionMode)
+            {
+                case MagnitudeRgbConversionMode.monochromatic:
+                    var magnitude = (int)CS152Helpers.GetMagnitude(r, g, b);
+                    return Color.FromArgb(magnitude, magnitude, magnitude);
+                case MagnitudeRgbConversionMode.scaledHue:
+                    throw new NotImplementedException("Future development");
+                case MagnitudeRgbConversionMode.realistic:
                 default:
                     return Color.FromArgb(r, g, b);
             }
