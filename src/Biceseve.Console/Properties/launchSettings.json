@@ -1,8 +1,12 @@
 {
   "profiles": {
-    "Biceseve.ConsoleApp": {
+    "Write": {
       "commandName": "Project",
-      "commandLineArgs": "-r C:\\Users\\filip\\source\\repos\\Biceseve\\color.bmp"
+      "commandLineArgs": "-w C:\\Users\\filip\\source\\repos\\Biceseve\\data\\24bSample.bmp"
+    },
+    "Read": {
+      "commandName": "Project",
+      "commandLineArgs": "-r C:\\Users\\filip\\source\\repos\\Biceseve\\data\\test.xyz"
     }
   }
 }

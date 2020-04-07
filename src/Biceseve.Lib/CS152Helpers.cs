@@ -22,7 +22,7 @@ namespace Biceseve.Lib
             }
         }
 
-        public static double ScaleValue(double value, int min = 0, int max = 765, int minScale = -11000, int maxScale = 8500)
+        public static double ScaleValue(double value, int min = 0, int max = 255, int minScale = -11000, int maxScale = 8500)
         {
             return minScale + (value - min) / (max - min) * (maxScale - minScale);
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Biceseve.Lib;
+using System;
 
 namespace Biceseve.ConsoleApp
 {
