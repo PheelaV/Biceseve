@@ -18,8 +18,8 @@ namespace Biceseve.Lib
 
             var rgbArray = sourceImage.ConvertToRGBArray(MagnitudeRgbConversionMode.monochromatic);
 
-            rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output-write.jpg"));
-            rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, $"{file.Name}-output-write.xyz"));
+            //rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output-write.jpg"));
+            rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-write_output.jpg"));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "<Pending>")]
@@ -30,7 +30,7 @@ namespace Biceseve.Lib
             var data = GetXyzData(filePath);
 
             var rgbArray = ConvertToRgbArray(data);
-            rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output-read.jpg"));
+            rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-read_output.jpg"));
         }
 
         public static Dictionary<double, Dictionary<double, double>> GetXyzData(string filePath)
@@ -43,7 +43,7 @@ namespace Biceseve.Lib
             {
                 var line = sr.ReadLine()?.Split('\t');
 
-                (double latitude, double longitude, double altitude) = (double.Parse(line[0]), double.Parse(line[1]), double.Parse(line[2]));
+                (double longitude, double latitude, double altitude) = (double.Parse(line[0]), double.Parse(line[1]), double.Parse(line[2]));
 
                 if (!data.ContainsKey(latitude))
                 {
