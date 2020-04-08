@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Biceseve.Lib
 {
@@ -19,7 +20,7 @@ namespace Biceseve.Lib
             var rgbArray = sourceImage.ConvertToRGBArray(MagnitudeRgbConversionMode.monochromatic);
 
             //rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output-write.jpg"));
-            rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-write_output.jpg"));
+            rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-write_output.xyz"));
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "<Pending>")]
@@ -30,7 +31,12 @@ namespace Biceseve.Lib
             var data = GetXyzData(filePath);
 
             var rgbArray = ConvertToRgbArray(data);
-            rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-read_output.jpg"));
+
+            //for (int i = 0; i < rgbArray.data.Length; i++)
+            //{
+            //    rgbArray.data[i][500] = Color.White;
+            //}
+            rgbArray.SaveRgbArrayAsBmpImage(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-read_output.bmp"));
         }
 
         public static Dictionary<double, Dictionary<double, double>> GetXyzData(string filePath)
@@ -58,18 +64,18 @@ namespace Biceseve.Lib
         public static RgbArray ConvertToRgbArray(Dictionary<double, Dictionary<double, double>> xyzData, MagnitudeRgbConversionMode conversionMode = MagnitudeRgbConversionMode.monochromatic)
         {
             EnsureRectangleSymmetry(xyzData);
+
             var xyzDataEnum = xyzData.GetEnumerator();
+            var firstRow = xyzData.First();
 
-            xyzDataEnum.MoveNext();
-            var row = xyzDataEnum.Current;
             var height = xyzData.Count;
-            var width = row.Value.Count;
-
+            var width = firstRow.Value.Count;
             var rgbArray = new Color[height][];
-
             int count = 0;
-            do
+
+            while (xyzDataEnum.MoveNext())
             {
+                var row = xyzDataEnum.Current;
                 var y = count / width;
                 rgbArray[y] = new Color[width];
 
@@ -81,10 +87,9 @@ namespace Biceseve.Lib
                     var pixel = rowEnum.Current;
                     var scaledMagnitude = (int)CS152Helpers.ScaleValue(pixel.Value, -11000, 8500, 0, 255);
                     rgbArray[y][x] = Bitmapper.GetColor(scaledMagnitude, conversionMode);
-
                     count++;
                 }
-            } while (xyzDataEnum.MoveNext());
+            }
 
             return new RgbArray(rgbArray);
         }

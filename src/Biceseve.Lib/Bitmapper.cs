@@ -22,14 +22,21 @@ namespace Biceseve.Lib
             /* GetBitsPerPixel just does a switch on the PixelFormat and returns the number */
             byte bitsPerPixel = Convert.ToByte(GetBitsPerPixel(bData.PixelFormat));
 
-            if(bitsPerPixel != 24)
+            if(bitsPerPixel <= 8)
             {
-                Console.WriteLine("WARNING, currently tested only with 24bit bmp, might be unstable");
+                Console.WriteLine("WARNING, WILL BLOW UP, currently supportert bmp formats with 8b/pixel or more");
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            } 
+            else if(bitsPerPixel != 24)
+            {
+                Console.WriteLine("WARNING, MIGHT BLOW UP, currently tested only with 24bit bmp, should work with 16bit/pixel and higher");
                 Console.WriteLine("Press any key to continue...");
                 Console.ReadKey();
             }
 
             /*the size of the image in bytes */
+            // stride = width * 3 + (width % 4)
             int size = bData.Stride * bData.Height;
 
             /*Allocate buffer for image*/
@@ -38,17 +45,31 @@ namespace Biceseve.Lib
             /*This overload copies data of /size/ into /data/ from location specified (/Scan0/)*/
             System.Runtime.InteropServices.Marshal.Copy(bData.Scan0, data, 0, size);
             var bytesPerPixel = bitsPerPixel / 8;
-            for (int i = 0; i < size; i += bytesPerPixel)
-            {
-                //double magnitude = 1 / 3d * (data[i] + data[i + 1] + data[i + 2]);
-                int x = i / bytesPerPixel % bmp.Width;
-                int y = bmp.Height - i / bytesPerPixel / bmp.Width;
-                if (x == 0) result[y - 1] = new System.Drawing.Color[bmp.Width];
+            //for (int i = 0; i < size; i += bytesPerPixel)
+            //{
+            //    //double magnitude = 1 / 3d * (data[i] + data[i + 1] + data[i + 2]);
+            //    int x = i / bytesPerPixel % bmp.Width;
+            //    int y = bmp.Height - i / bytesPerPixel / bmp.Width;
+            //    if (x == 0) result[y - 1] = new System.Drawing.Color[bmp.Width];
 
-                // bmp format scans starts at bottom left and goes to top right
-                // data[i] is the first of 3 bytes of color
-                // bmp stores values as Blue, Green, Red
-                result[y - 1][x] = GetColor(data[i + 2], data[i + 1], data[i], colorMode);
+            //    // bmp format scans starts at bottom left and goes to top right
+            //    // data[i] is the first of 3 bytes of color
+            //    // colors are in BGR format
+            //    result[y - 1][x] = GetColor(data[i + 2], data[i + 1], data[i], colorMode);
+            //}
+
+            // bmp format scans starts at bottom left and goes to top right
+            // data[i] is the first of 3 bytes of color
+            // colors are in BGR format
+            int x = 0;
+            for (int y = bmp.Height - 1; y >= 0; y--)
+            {
+                result[y] = new Color[bmp.Width];
+                for (x = 0; x < bmp.Width; x++)
+                {
+                    var pixelStart = y * (bmp.Width * bytesPerPixel + bmp.Width % 4) + x * bytesPerPixel;
+                    result[y][x] = GetColor(data[pixelStart + 2], data[pixelStart + 1], data[pixelStart], colorMode);
+                }
             }
 
             /* This override copies the data back into the location specified */
@@ -59,7 +80,7 @@ namespace Biceseve.Lib
             return new RgbArray(result);
         }
 
-        public static void SaveRgbArrayAsJpgImage(this RgbArray rgbArray, string filePath)
+        public static void SaveRgbArrayAsBmpImage(this RgbArray rgbArray, string filePath)
         {
             var width = rgbArray.Width;
             var height = rgbArray.Height;
@@ -75,7 +96,7 @@ namespace Biceseve.Lib
             }
 
             using var stream = new FileStream(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-            image.SaveAsJpeg(stream);
+            image.SaveAsBmp(stream);
         }
 
         public static Color GetColor(int magnitude, MagnitudeRgbConversionMode conversionMode)
