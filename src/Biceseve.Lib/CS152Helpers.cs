@@ -17,34 +17,34 @@ namespace Biceseve.Lib
             {
                 for (int y = 0; y < rgbArray.Height; y++)
                 {
-                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[y][x])));
+                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][rgbArray.Width - x - 1])));
                 }
             }
         }
 
-        public static double ScaleValue(double value, double min = 0, double max = 255, double minScale = -11000, double maxScale = 8500)
+        public static float ScaleValue(float value, float min = 0, float max = 255, float minScale = -11000, float maxScale = 8500)
         {
             return minScale + (value - min) / (max - min) * (maxScale - minScale);
         }
 
-        public static double GetMagnitude(Color color)
+        public static float GetMagnitude(Color color)
         {
             return GetMagnitude(color.R, color.G, color.B);
         }
 
-        public static double GetMagnitude(int r, int g, int b)
+        public static float GetMagnitude(int r, int g, int b)
         {
-            return (r + g + b) / 3d;
+            return (r + g + b) / 3f;
         }
 
-        private static double ScaleCoordinate(int coordinate, CoordinationSteps steps = CoordinationSteps.OneSixth)
+        private static float ScaleCoordinate(int coordinate, CoordinationSteps steps = CoordinationSteps.OneSixth)
         {
             switch (steps)
             {
                 case CoordinationSteps.OneSixth:
-                    return coordinate * (1 / 6d);
+                    return coordinate * (1 / 6f);
                 case CoordinationSteps.OneFifteenth:
-                    return coordinate * (1 / 15d);
+                    return coordinate * (1 / 15f);
                 default: throw new ArgumentNullException("ScaleCoordinate step argument null");
             }
         }

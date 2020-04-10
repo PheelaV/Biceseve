@@ -18,7 +18,7 @@ namespace Biceseve.Test
                 rgbArray.data[i] = new Color[y];
                 for (int j = 0; j < y; j++)
                 {
-                    var magnitude = (int)((i / (double)x + j / (double)y) * 128);
+                    var magnitude = (int)((i / (float)x + j / (float)y) * 128);
                     rgbArray.data[i][j] = Color.FromArgb(magnitude, magnitude, magnitude);
                 }
             }

@@ -2,15 +2,15 @@
   "profiles": {
     "Write": {
       "commandName": "Project",
-      "commandLineArgs": "-w C:\\Users\\filip\\source\\repos\\Biceseve\\data\\testData.bmp"
+      "commandLineArgs": "-w C:\\Users\\filip\\source\\repos\\Biceseve\\data\\private\\testData.bmp"
     },
     "Read": {
       "commandName": "Project",
-      "commandLineArgs": "-r  C:\\Users\\filip\\source\\repos\\Biceseve\\data\\earth.xyz"
+      "commandLineArgs": "-r  C:\\Users\\filip\\source\\repos\\Biceseve\\data\\private\\totoPrvni-write_output.xyz"
     },
     "WriteCustom": {
       "commandName": "Project",
-      "commandLineArgs": "-w C:\\Users\\filip\\source\\repos\\Biceseve\\data\\totoPrvni.bmp"
+      "commandLineArgs": "-w C:\\Users\\filip\\source\\repos\\Biceseve\\data\\private\\totoPrvni.bmp"
     }
   }
 }

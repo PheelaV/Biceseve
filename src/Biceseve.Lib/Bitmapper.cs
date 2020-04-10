@@ -11,7 +11,6 @@ namespace Biceseve.Lib
 {
     public static partial class Bitmapper
     {
-        // CURRENTLY ONLY TESTED WITH 24bit bmp
         public static RgbArray ConvertToRGBArray(this Bitmap bmp, MagnitudeRgbConversionMode colorMode = MagnitudeRgbConversionMode.realistic)
         {
             //https://stackoverflow.com/a/1563170
@@ -36,7 +35,7 @@ namespace Biceseve.Lib
             }
 
             /*the size of the image in bytes */
-            // stride = width * 3 + (width % 4)
+            // stride = width * bytesPerpixel + (width % 4) - 4 because it needs to be 32-bit adressable
             int size = bData.Stride * bData.Height;
 
             /*Allocate buffer for image*/
@@ -45,18 +44,6 @@ namespace Biceseve.Lib
             /*This overload copies data of /size/ into /data/ from location specified (/Scan0/)*/
             System.Runtime.InteropServices.Marshal.Copy(bData.Scan0, data, 0, size);
             var bytesPerPixel = bitsPerPixel / 8;
-            //for (int i = 0; i < size; i += bytesPerPixel)
-            //{
-            //    //double magnitude = 1 / 3d * (data[i] + data[i + 1] + data[i + 2]);
-            //    int x = i / bytesPerPixel % bmp.Width;
-            //    int y = bmp.Height - i / bytesPerPixel / bmp.Width;
-            //    if (x == 0) result[y - 1] = new System.Drawing.Color[bmp.Width];
-
-            //    // bmp format scans starts at bottom left and goes to top right
-            //    // data[i] is the first of 3 bytes of color
-            //    // colors are in BGR format
-            //    result[y - 1][x] = GetColor(data[i + 2], data[i + 1], data[i], colorMode);
-            //}
 
             // bmp format scans starts at bottom left and goes to top right
             // data[i] is the first of 3 bytes of color
@@ -67,7 +54,9 @@ namespace Biceseve.Lib
                 result[y] = new Color[bmp.Width];
                 for (x = 0; x < bmp.Width; x++)
                 {
-                    var pixelStart = y * (bmp.Width * bytesPerPixel + bmp.Width % 4) + x * bytesPerPixel;
+                    var strideOverhand = bmp.Width % 4;
+                    var widthTotal = (bmp.Width * bytesPerPixel + strideOverhand);
+                    var pixelStart = y * widthTotal + x * bytesPerPixel;
                     result[y][x] = GetColor(data[pixelStart + 2], data[pixelStart + 1], data[pixelStart], colorMode);
                 }
             }

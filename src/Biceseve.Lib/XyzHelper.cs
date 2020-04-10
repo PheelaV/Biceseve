@@ -24,36 +24,30 @@ namespace Biceseve.Lib
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "<Pending>")]
-        public static void ReadXYZFormat(string filePath)
+        public static void ReadXYZFormat(string filePath, MagnitudeRgbConversionMode mode = MagnitudeRgbConversionMode.monochromatic)
         {
             var file = IoHelpers.GetFile(filePath);
-
             var data = GetXyzData(filePath);
+            var rgbArray = ConvertToRgbArray(data, mode);
 
-            var rgbArray = ConvertToRgbArray(data);
-
-            //for (int i = 0; i < rgbArray.data.Length; i++)
-            //{
-            //    rgbArray.data[i][500] = Color.White;
-            //}
             rgbArray.SaveRgbArrayAsBmpImage(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-read_output.bmp"));
         }
 
-        public static Dictionary<double, Dictionary<double, double>> GetXyzData(string filePath)
+        public static SortedDictionary<float, SortedDictionary<float, float>> GetXyzData(string filePath)
         {
             var file = IoHelpers.GetFile(filePath);
-            var data = new Dictionary<double, Dictionary<double, double>>();
+            var data = new SortedDictionary<float, SortedDictionary<float, float>>();
 
             using var sr = new StreamReader(file.FullName);
             while (!sr.EndOfStream)
             {
                 var line = sr.ReadLine()?.Split('\t');
 
-                (double longitude, double latitude, double altitude) = (double.Parse(line[0]), double.Parse(line[1]), double.Parse(line[2]));
+                (float longitude, float latitude, float altitude) = (float.Parse(line[0]), float.Parse(line[1]), float.Parse(line[2]));
 
                 if (!data.ContainsKey(latitude))
                 {
-                    data[latitude] = new Dictionary<double, double>();
+                    data[latitude] = new SortedDictionary<float, float>();
                 }
                 data[latitude][longitude] = altitude;
             }
@@ -61,7 +55,7 @@ namespace Biceseve.Lib
             return data;
         }
 
-        public static RgbArray ConvertToRgbArray(Dictionary<double, Dictionary<double, double>> xyzData, MagnitudeRgbConversionMode conversionMode = MagnitudeRgbConversionMode.monochromatic)
+        public static RgbArray ConvertToRgbArray(SortedDictionary<float, SortedDictionary<float, float>> xyzData, MagnitudeRgbConversionMode conversionMode)
         {
             EnsureRectangleSymmetry(xyzData);
 
@@ -77,7 +71,7 @@ namespace Biceseve.Lib
             {
                 var row = xyzDataEnum.Current;
                 var y = count / width;
-                rgbArray[y] = new Color[width];
+                rgbArray[height - y - 1] = new Color[width];
 
                 var rowEnum = row.Value.GetEnumerator();
 
@@ -86,7 +80,7 @@ namespace Biceseve.Lib
                     var x = count % width;
                     var pixel = rowEnum.Current;
                     var scaledMagnitude = (int)CS152Helpers.ScaleValue(pixel.Value, -11000, 8500, 0, 255);
-                    rgbArray[y][x] = Bitmapper.GetColor(scaledMagnitude, conversionMode);
+                    rgbArray[height - y - 1][width - x - 1] = Bitmapper.GetColor(scaledMagnitude, conversionMode);
                     count++;
                 }
             }
@@ -94,7 +88,7 @@ namespace Biceseve.Lib
             return new RgbArray(rgbArray);
         }
 
-        private static void EnsureRectangleSymmetry(Dictionary<double, Dictionary<double, double>> xyzData)
+        private static void EnsureRectangleSymmetry(SortedDictionary<float, SortedDictionary<float, float>> xyzData)
         {
             _ = xyzData ?? throw new ArgumentNullException("The value provided was null");
 
