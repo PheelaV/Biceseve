@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Biceseve.Lib
 {
@@ -37,8 +38,9 @@ namespace Biceseve.Lib
         {
             var file = IoHelpers.GetFile(filePath);
             var data = new SortedDictionary<float, SortedDictionary<float, float>>();
+            var utf8WithoutBOM = new UTF8Encoding(false);
 
-            using var sr = new StreamReader(file.FullName);
+            using var sr = new StreamReader(file.FullName, utf8WithoutBOM);
             while (!sr.EndOfStream)
             {
                 var line = sr.ReadLine()?.Split('\t');

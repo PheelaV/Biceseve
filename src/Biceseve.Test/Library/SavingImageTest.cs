@@ -28,17 +28,17 @@ namespace Biceseve.Test
         [Fact]
         public void SaveRgbArrayAsImage()
         {
-            var rgbArray = GetTestRgbArray(3,3);
+            var rgbArray = GetTestRgbArray(11,11);
 
-            rgbArray.SaveRgbArrayAsBmpImage("C:\\Users\\filip\\source\\repos\\Biceseve\\data\\testData.bmp");
+            rgbArray.SaveRgbArrayAsBmpImage("C:\\Users\\filip\\source\\repos\\Biceseve\\data\\private\\testData.bmp");
         }
 
         [Fact]
         public void SaveRgbArrayAsXyz()
         {
-            var rgbArray = GetTestRgbArray(3,3);
+            var rgbArray = GetTestRgbArray(11,11);
 
-            rgbArray.SaveRGBArrayAsXYZ("C:\\Users\\filip\\source\\repos\\Biceseve\\data\\tesatData.xyz");
+            rgbArray.SaveRGBArrayAsXYZ("C:\\Users\\filip\\source\\repos\\Biceseve\\data\\private\\tesatData.xyz");
         }
     }
 }

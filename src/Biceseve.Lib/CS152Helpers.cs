@@ -11,7 +11,8 @@ namespace Biceseve.Lib
         public static void SaveRGBArrayAsXYZ(this RgbArray rgbArray, string filePath)
         {
             var delimeter = "\t";
-            using var writer = new StreamWriter(filePath, append: false, Encoding.UTF8);
+            var utf8WithoutBOM = new UTF8Encoding(false);
+            using var writer = new StreamWriter(filePath, append: false, utf8WithoutBOM);
 
             for (int x = 0; x < rgbArray.Width; x++)
             {
