@@ -18,7 +18,7 @@ namespace Biceseve.Lib
             {
                 for (int y = 0; y < rgbArray.Height; y++)
                 {
-                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][rgbArray.Width - x - 1])));
+                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][x])));
                 }
             }
         }

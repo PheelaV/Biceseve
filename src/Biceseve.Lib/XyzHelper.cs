@@ -15,12 +15,9 @@ namespace Biceseve.Lib
         public static void WriteXYZFormat(string filePath)
         {
             var file = IoHelpers.GetFile(filePath);
-
             using var sourceImage = new Bitmap(file.FullName);
-
             var rgbArray = sourceImage.ConvertToRGBArray(MagnitudeRgbConversionMode.monochromatic);
 
-            //rgbArray.SaveRgbArrayAsJpgImage(Path.Combine(file.DirectoryName, "output-write.jpg"));
             rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-write_output.xyz"));
         }
 
