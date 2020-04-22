@@ -12,7 +12,7 @@ aka BitmapCSV - Tool for reading bitmap and converting it into a school project 
 - dotnet restore
 - dotnet build
 
-### Find the exe in bin folder
+### Find the executable in the bin folder
 
 .\Biceseve.ConsoleApp.exe [argument] [path to either .bmp or .xyz]
 
