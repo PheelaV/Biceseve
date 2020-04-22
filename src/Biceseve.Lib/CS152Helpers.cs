@@ -22,6 +22,21 @@ namespace Biceseve.Lib
                 }
             }
         }
+        
+        public static void SaveRGBArrayAsZeroCenteredXYZ(this RgbArray rgbArray, string filePath)
+        {
+            var delimeter = "\t";
+            var utf8WithoutBOM = new UTF8Encoding(false);
+            using var writer = new StreamWriter(filePath, append: false, utf8WithoutBOM);
+
+            for (int x = 0; x < rgbArray.Width; x++)
+            {
+                for (int y = 0; y < rgbArray.Height; y++)
+                {
+                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][(x + rgbArray.Width / 2) % rgbArray.Width])));
+                }
+            }
+        }
 
         public static float ScaleValue(float value, float min = 0, float max = 255, float minScale = -11000, float maxScale = 8500)
         {

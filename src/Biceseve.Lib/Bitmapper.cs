@@ -79,7 +79,7 @@ namespace Biceseve.Lib
             {
                 for (var y = 0; y < height; y++)
                 {
-                    var pixel = rgbArray.data[y][x];
+                    var pixel = rgbArray.data[y][(x + width / 2 + width%2) % width];
                     image[x, y] = new Rgb24(pixel.R, pixel.G, pixel.B);
                 }
             }

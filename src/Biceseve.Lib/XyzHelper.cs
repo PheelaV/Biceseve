@@ -21,6 +21,15 @@ namespace Biceseve.Lib
             rgbArray.SaveRGBArrayAsXYZ(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-write_output.xyz"));
         }
 
+        public static void WriteZeroCenteredXYZFormat(string filePath)
+        {
+            var file = IoHelpers.GetFile(filePath);
+            using var sourceImage = new Bitmap(file.FullName);
+            var rgbArray = sourceImage.ConvertToRGBArray(MagnitudeRgbConversionMode.monochromatic);
+
+            rgbArray.SaveRGBArrayAsZeroCenteredXYZ(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-write_zero_centered_output.xyz"));
+        }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "<Pending>")]
         public static void ReadXYZFormat(string filePath, MagnitudeRgbConversionMode mode = MagnitudeRgbConversionMode.monochromatic)
         {
@@ -29,6 +38,15 @@ namespace Biceseve.Lib
             var rgbArray = ConvertToRgbArray(data, mode);
 
             rgbArray.SaveRgbArrayAsBmpImage(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-read_output.bmp"));
+        }
+
+        public static void ReadZeroCenteredXYZFormat(string filePath, MagnitudeRgbConversionMode mode = MagnitudeRgbConversionMode.monochromatic)
+        {
+            var file = IoHelpers.GetFile(filePath);
+            var data = GetXyzData(filePath);
+            var rgbArray = ConvertToRgbArray(data, mode);
+
+            rgbArray.SaveRgbArrayAsBmpImage(Path.Combine(file.DirectoryName, $"{Path.GetFileNameWithoutExtension(file.Name)}-read_zero_centered_output.bmp"));
         }
 
         public static SortedDictionary<float, SortedDictionary<float, float>> GetXyzData(string filePath)
