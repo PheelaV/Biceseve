@@ -26,11 +26,11 @@ namespace Biceseve.ConsoleApp
                       args.Length != 3 || args[2] == "3" ? MagnitudeRgbConversionMode.monochromatic 
                     : args[2] == "1"? MagnitudeRgbConversionMode.scaledHue 
                     : MagnitudeRgbConversionMode.realistic;
-                XyzHelper.ReadZeroCenteredXYZFormat(args[1], colorMode);
+                XyzHelper.ReadXYZFormat(args[1], colorMode, true);
             } 
             else if (args[0] == "-wzc" || args[0] == "--writeZeroCentered" && paramsLengthValid)
             {
-                XyzHelper.WriteZeroCenteredXYZFormat(args[1]);
+                XyzHelper.WriteXYZFormat(args[1], true);
             } 
             else
             {

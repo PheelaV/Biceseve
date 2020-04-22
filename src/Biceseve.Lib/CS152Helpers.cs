@@ -8,7 +8,7 @@ namespace Biceseve.Lib
 {
     public static class CS152Helpers
     {
-        public static void SaveRGBArrayAsXYZ(this RgbArray rgbArray, string filePath)
+        public static void SaveRGBArrayAsXYZ(this RgbArray rgbArray, string filePath, bool zeroCentered = false)
         {
             var delimeter = "\t";
             var utf8WithoutBOM = new UTF8Encoding(false);
@@ -18,22 +18,7 @@ namespace Biceseve.Lib
             {
                 for (int y = 0; y < rgbArray.Height; y++)
                 {
-                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][x])));
-                }
-            }
-        }
-        
-        public static void SaveRGBArrayAsZeroCenteredXYZ(this RgbArray rgbArray, string filePath)
-        {
-            var delimeter = "\t";
-            var utf8WithoutBOM = new UTF8Encoding(false);
-            using var writer = new StreamWriter(filePath, append: false, utf8WithoutBOM);
-
-            for (int x = 0; x < rgbArray.Width; x++)
-            {
-                for (int y = 0; y < rgbArray.Height; y++)
-                {
-                    writer.WriteLine(ScaleCoordinate(x) + delimeter + ScaleCoordinate(y) + delimeter + ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][(x + rgbArray.Width / 2) % rgbArray.Width])));
+                    String.Join(delimeter, ScaleCoordinate(x), ScaleCoordinate(y), ScaleValue(GetMagnitude(rgbArray.data[rgbArray.Height - y - 1][zeroCentered ? (x + rgbArray.Width / 2) % rgbArray.Width : x])));
                 }
             }
         }

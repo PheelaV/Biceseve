@@ -69,7 +69,7 @@ namespace Biceseve.Lib
             return new RgbArray(result);
         }
 
-        public static void SaveRgbArrayAsBmpImage(this RgbArray rgbArray, string filePath)
+        public static void SaveRgbArrayAsBmpImage(this RgbArray rgbArray, string filePath, bool zeroCentered = false)
         {
             var width = rgbArray.Width;
             var height = rgbArray.Height;
@@ -79,7 +79,7 @@ namespace Biceseve.Lib
             {
                 for (var y = 0; y < height; y++)
                 {
-                    var pixel = rgbArray.data[y][(x + width / 2 + width%2) % width];
+                    var pixel = rgbArray.data[y][zeroCentered ? (x + width / 2 + width%2) % width : x];
                     image[x, y] = new Rgb24(pixel.R, pixel.G, pixel.B);
                 }
             }
