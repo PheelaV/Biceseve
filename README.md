@@ -10,6 +10,7 @@ aka BitmapCSV - Tool for reading bitmap and converting it into a school project 
     - (tested with)
 ### Execute commands
 - dotnet build
+- dotnet run
 
 ### Find the executable in the bin folder
 
